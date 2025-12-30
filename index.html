@@ -4,313 +4,108 @@
 <head>
     <title>Chatbot</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg-dark: #0b0f1a;
-            --bg-panel: #11162a;
-
-            --neon-blue: #00f0ff;
-            --neon-red: #ff004c;
-            --neon-purple: #8f00ff;
-
-            --text-main: #e6e6e6;
-            --text-dim: #a0a0a0;
-
-            --user-msg: rgba(0, 240, 255, 0.15);
-            --bot-msg: rgba(255, 0, 76, 0.15);
-        }
-
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: radial-gradient(circle at top, #0e0f18, #0e2577);
-            color: var(--text-main);
-            scroll-behavior: smooth;
-        }
-
-        .container {
-            margin-top: 20px;
-            display: flex;
-        }
-
-        .app-container {
-            height: 100vh;
-            max-width: 800px;
-            margin-top: 20px;
-            margin-left: auto;
-            margin-right: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: end;
-            backdrop-filter: blur(20px);
-            background: rgba(10, 14, 30, 0.651);
-            border-radius: 20px;
-            box-shadow: 0 0 25px rgba(0, 240, 255, 0.15);
-            animation: appPulse 6s infinite ease-in-out;
-        }
-
-        .chat-input {
-            background: #050812;
-            color: var(--text-main);
-            padding: 8px 12px;
-            font-size: 18px;
-            border-radius: 10px;
-            border: 1px solid var(--neon-blue);
-            outline: none;
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
-            flex-grow: 1;
-        }
-
-        .chat-input::placeholder {
-            color: var(--text-dim);
+            font-family: Arial;
+            margin-top: 0px;
+            margin-bottom: 0px;
+            background: linear-gradient(rgb(99, 99, 99), gray, rgb(99, 99, 99));
         }
 
         .send-button {
-            margin-left: 15px;
-            padding: 8px 10px;
-            background: var(--neon-purple);
-            color: var(--text-main);
-            border: 1px solid var(--neon-purple);
+            background-color: rgb(4, 59, 34);
+            color: white;
+            padding: 12px 20px;
+            margin-left: 10px;
+            border: none;
             border-radius: 10px;
-            box-shadow: 0 0 12px rgba(143, 0, 255, 0.4);
-            font-size: 18px;
+            font-size: 15px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all .3s ease;
         }
 
         .send-button:hover {
-            background: var(--neon-purple);
-            color: #fff;
-            box-shadow: 0 0 20px rgba(143, 0, 255, 0.8);
+            background: lightgreen;
+            color: black;
         }
 
-        .send-button:active {
-            transform: scale(0.9);
-            box-shadow: 0 0 25px rgba(143, 0, 255, 0.9);
+        .chat-input {
+            padding: 12px 15px;
+            border-radius: 10px;
+            border-width: 1px;
+            font-size: 15px;
+            flex-grow: 1;
+        }
+
+        .chat-input-container {
+            display: flex;
+            margin-bottom: 60px;
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
         .chat-message-user {
-            margin-top: 15px;
             display: flex;
             justify-content: end;
             align-items: start;
         }
 
         .chat-message-robot {
-            margin-top: 15px;
             display: flex;
-            justify-content: start;
             align-items: start;
         }
 
         .chat-message-text {
-            margin-left: 15px;
-            margin-right: 15px;
-            margin-top: 5px 20px;
+            background-color: rgb(238, 238, 238);
             padding: 15px 20px;
+            border-radius: 10px;
+            margin-right: 10px;
+            margin-left: 10px;
+            margin-bottom: 20px;
             max-width: 300px;
-            background: rgb(75, 75, 75);
-            color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-            border-radius: 12px;
         }
 
-        .chat-message-user .chat-message-text {
-            background: var(--user-msg);
-            border: 1px solid var(--neon-blue);
-            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
-            animation: neonPulseBlue 3s infinite ease-in-out;
-        }
-
-        .chat-message-robot .chat-message-text {
-            background: var(--bot-msg);
-            border: 1px solid var(--neon-red);
-            box-shadow: 0 0 12px rgba(255, 0, 76, 0.4);
-            animation: neonPulseRed 3s infinite ease-in-out;
-        }
-
-        .chat-pfp {
-            width: 50px;
+        .chat-message-profile {
+            width: 45px;
             border-radius: 50%;
         }
 
-        .message-container {
+        .chat-messages-container {
             flex-grow: 1;
+            margin-top: 20px;
             overflow: scroll;
             scrollbar-width: none;
-
+            -ms-overflow-style: none;
         }
 
-        .typing {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+        .welcome-message {
+            color: white;
+            text-align: center;
         }
 
-        .typing span {
-            width: 6px;
-            height: 6px;
-            background: var(--neon-red);
-            border-radius: 50%;
-            animation: typingDots 2s infinite ease-in-out both;
-            box-shadow: 0 0 8px var(--neon-red);
-        }
-
-        .typing span:nth-child(1) {
-            animation-delay: 0s;
-        }
-
-        .typing span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingDots {
-
-            0%,
-            80%,
-            100% {
-                transform: scale(0);
-                opacity: 0.3;
-            }
-
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes neonPulseBlue {
-            0% {
-                box-shadow: 0 0 6px var(--neon-blue);
-            }
-
-            50% {
-                box-shadow: 0 0 18px var(--neon-blue);
-            }
-
-            100% {
-                box-shadow: 0 0 6px var(--neon-blue);
-            }
-        }
-
-        @keyframes neonPulseRed {
-            0% {
-                box-shadow: 0 0 6px var(--neon-red);
-            }
-
-            50% {
-                box-shadow: 0 0 18px var(--neon-red);
-            }
-
-            100% {
-                box-shadow: 0 0 6px var(--neon-red);
-            }
-        }
-
-        @keyframes appPulse {
-            0% {
-                box-shadow: 0 0 15px rgba(47, 235, 248, 0.966);
-            }
-
-            50% {
-                box-shadow: 0 0 35px rgba(144, 0, 255, 0.904);
-            }
-
-            100% {
-                box-shadow: 0 0 15px rgba(0, 238, 255, 0.842);
-            }
-        }
-
-        @media (max-width: 600px) {
-
-            body {
-                overflow: hidden;
-            }
-
-            .app-container {
-                width: 100%;
-                height: 80vh;
-                padding: 10px;
-                border-radius: 0;
-            }
-
-            .message-container {
-                padding: 10px 6px;
-            }
-
-            .chat-message-user,
-            .chat-message-robot {
-                margin-top: 12px;
-            }
-
-            /* 💬 Chat bubble text */
-            .chat-message-text {
-                max-width: 92%;
-                font-size: 16px;
-                /* ⬆️ bigger text */
-                padding: 14px 16px;
-                /* ⬆️ more breathing room */
-                line-height: 1.5;
-            }
-
-            /* 👤 Profile icons */
-            .chat-pfp {
-                width: 38px;
-            }
-
-            /* ⌨️ Input bar */
-            .container {
-                padding: 8px;
-                gap: 10px;
-            }
-
-            .chat-input {
-                font-size: 18px;
-                /* ⬆️ prevents zoom + readable */
-                padding: 14px 16px;
-                border-radius: 14px;
-            }
-
-            /* 🚀 Send button */
-            .send-button {
-                width: 56px;
-                height: 56px;
-                min-width: 56px;
-                padding: 0;
-                border-radius: 50%;
-                font-size: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                /* ⬆️ thumb-friendly */
-            }
-
+        .loading-spinner {
+            margin: -15px;
+            height: 40px;
         }
     </style>
 </head>
 
 <body>
     <div class="js-container"></div>
-
     <script src="https://unpkg.com/supersimpledev/react.js"></script>
     <script src="https://unpkg.com/supersimpledev/react-dom.js"></script>
-
     <script src="https://unpkg.com/supersimpledev/chatbot.js"></script>
-
     <script src="https://unpkg.com/supersimpledev/babel.js"></script>
     <script type="text/babel">
 
         function ChatInput({ chatMessages, setChatMessages }) {
+
             const [inputText, setInputText] = React.useState('');
             const [isLoading, setIsLoading] = React.useState(false);
 
@@ -318,16 +113,16 @@
                 setInputText(event.target.value);
             }
 
-            // 3k 3l 3m
             async function sendMessage() {
 
                 if (isLoading || inputText === '') {
                     return;
                 }
 
-                // Set isLoading to true at the start and set it to false after everything is done
+                // Set isLoading to true at the start, and set it to false after everything is done.
                 setIsLoading(true);
 
+                // Clear the textbox at the top now because the Chatbot will take some time to load the response. We want to clear the textbox immediately rather waiting for the Chatbot to finish loading.
                 setInputText('');
 
                 const newChatMessages = [
@@ -340,17 +135,20 @@
                 ];
 
                 setChatMessages([
-                    // Creates a new temporary Loading... message
                     ...newChatMessages,
+                    // This creates a temporary gif spinner message because we don't save this message in newChatMessages it will be removed later, when we add the response.
                     {
-                        message: 'Loading...',
+                        message: <img
+                            src="https://supersimple.dev/images/loading-spinner.gif"
+                            className="loading-spinner"
+                        />,
                         sender: 'robot',
                         id: crypto.randomUUID()
                     }
-                ])
+                ]);
 
-                const response = await
-                    Chatbot.getResponseAsync(inputText);
+                const response = await Chatbot.getResponseAsync(inputText);
+
                 setChatMessages([
                     ...newChatMessages,
                     {
@@ -363,37 +161,50 @@
                 // Set isLoading to false after everything is done.
                 setIsLoading(false);
             }
-            // 3k 3l 3m
 
-            // 3i 3j
-            function handleKeyDown(event) {
+            function handleKeyDown() {
                 if (event.key === 'Enter') {
                     sendMessage();
                 } else if (event.key === 'Escape') {
                     setInputText('');
                 }
             }
-            // 3i 3j
 
             return (
-                <div className="container">
+                <div className="chat-input-container">
                     <input
-                        className="chat-input"
-                        placeholder="Send a text"
+                        required
+                        placeholder="Send a message to Chatbot"
                         size="30"
-                        onChange={saveInputText}
-                        // 3i 3j
                         onKeyDown={handleKeyDown}
+                        onChange={saveInputText}
                         value={inputText}
+                        className="chat-input"
                     />
                     <button
+                        onClick={sendMessage}
                         className="send-button"
-                        onClick={sendMessage}>Send</button>
+                    >Send</button>
                 </div>
             );
         }
 
         function ChatMessage({ message, sender }) {
+
+            // const message = props.message;
+            // const sender = props.sender;
+            // const { message, sender } = props;
+            /*
+            if (sender === 'robot') {
+              return (
+                <div>
+                  <img src="robot.png" width="50" />
+                  {message}
+                </div>
+              );
+            }
+            */
+
             return (
                 <div className={
                     sender === 'user'
@@ -401,48 +212,42 @@
                         : 'chat-message-robot'
                 }>
                     {sender === 'robot' && (
-                        <img
-                            className="chat-pfp"
-                            src="https://i.redd.it/4hgxrxvaxfge1.png"
-                            alt="robot"
-                        />)}
-
+                        <img src="https://i.pinimg.com/736x/a1/51/b7/a151b738859875afc2e63a53f68572f4.jpg" className="chat-message-profile" />
+                    )}
                     <div className="chat-message-text">
-                        {message === 'Loading...' ? (
-                            <div className="typing">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                        ) : (
-                            message
-                        )}
+                        {message}
                     </div>
-
                     {sender === 'user' && (
-                        <img
-                            className="chat-pfp"
-                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-jtnzc_wl5e_2sxzdh3kk_JCPIrH-uZG02w&s"
-                            alt="user"
-                        />)}
+                        <img src="https://tr.rbxcdn.com/180DAY-d4a6d1564bf7c0e65447501bdb3cc584/420/420/FaceAccessory/Png/noFilter" className="chat-message-profile" />
+                    )}
                 </div>
             );
         }
 
-        function ChatMessages({ chatMessages }) {
+        function useAutoScroll(dependencies) {
+            // To use a function as a hook, the function name must start with "use".
 
-            const chatMessagesRef = React.useRef();
+            const containerRef = React.useRef(null);
 
             React.useEffect(() => {
-                const containerElem = chatMessagesRef.current;
+
+                const containerElem = containerRef.current;
 
                 if (containerElem) {
                     containerElem.scrollTop = containerElem.scrollHeight;
                 }
-            }, [chatMessages]);
+
+            }, dependencies);
+
+            return containerRef;
+        }
+
+        function ChatMessages({ chatMessages }) {
+
+            const chatMessagesRef = useAutoScroll([chatMessages]);
 
             return (
-                <div className="message-container" ref={chatMessagesRef}>
+                <div className="chat-messages-container" ref={chatMessagesRef}>
                     {chatMessages.map((chatMessage) => {
                         return (
                             <ChatMessage
@@ -457,11 +262,19 @@
         }
 
         function App() {
+
             const [chatMessages, setChatMessages] = React.useState([]);
             // const [chatMessages, setChatMessages] = array;
+            // const chatMessages = array[0];
+            // const setChatMessages = array[1];
 
             return (
                 <div className="app-container">
+                    {chatMessages.length === 0 && (
+                        <p className="welcome-message">
+                            Welcome to my chatbot. It can say Hello, Flip a Coin & Roll a Dice.
+                        </p>
+                    )}
                     <ChatMessages
                         chatMessages={chatMessages}
                     />
@@ -473,14 +286,9 @@
             );
         }
 
-
         const container = document.querySelector('.js-container');
         ReactDOM.createRoot(container).render(<App />);
     </script>
 </body>
 
 </html>
-
-
-
-
